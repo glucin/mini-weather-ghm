@@ -20,7 +20,7 @@ public class MyApplication extends Application{
     private static MyApplication myApplication;
     private CityDB myCityDB;
 
-    private List<City> mCityList;
+    private static List<City> mCityList;
 
     public void onCreate(){
         super.onCreate();
@@ -55,7 +55,7 @@ public class MyApplication extends Application{
         return true;
     }
 
-    public List<City> getCityList() {
+    public static List<City> getCityList() {
         return mCityList;
     }
 

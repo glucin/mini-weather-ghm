@@ -347,25 +347,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         else if(todayWeather.getType().equals("中雨")){
             weatherImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_zhongyu)));
         }
-
-        int pm = Integer.parseInt(todayWeather.getPm25());
-        if(pm <= 50){
-            pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_0_50)));
-        }
-        else if(pm > 50 && pm <= 100){
-            pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_51_100)));
-        }
-        else if(pm > 100 && pm <= 150){
-            pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_101_150)));
-        }
-        else if(pm > 150 && pm <= 200){
-            pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_151_200)));
-        }
-        else if(pm > 200 && pm <= 300){
-            pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_201_300)));
-        }
-        else if(pm > 300){
-            pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_greater_300)));
+        if(todayWeather.getPm25() != null) {
+            int pm = Integer.parseInt(todayWeather.getPm25());
+            if (pm <= 50) {
+                pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_0_50)));
+            } else if (pm > 50 && pm <= 100) {
+                pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_51_100)));
+            } else if (pm > 100 && pm <= 150) {
+                pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_101_150)));
+            } else if (pm > 150 && pm <= 200) {
+                pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_151_200)));
+            } else if (pm > 200 && pm <= 300) {
+                pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_201_300)));
+            } else if (pm > 300) {
+                pmImg.setImageDrawable(getResources().getDrawable((R.drawable.biz_plugin_weather_greater_300)));
+            }
         }
 
 
