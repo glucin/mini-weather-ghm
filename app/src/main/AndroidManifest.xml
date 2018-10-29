@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ghm.miniweather">
+    //增加访问网络状态的权限
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    //增加访问Internet的权限
     <uses-permission android:name="android.permission.INTERNET"/>
+    //注册MyApplication
     <application
         android:name="com.example.ghm.app.MyApplication"
         android:allowBackup="true"
@@ -11,12 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        //注册MainActivity
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        //注册SelectCity
         <activity android:name=".SelectCity">
 
         </activity>

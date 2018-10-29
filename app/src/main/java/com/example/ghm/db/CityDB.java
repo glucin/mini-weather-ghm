@@ -14,10 +14,12 @@ public class CityDB {
     private static final String CITY_TABLE_NAME = "city";
     private SQLiteDatabase db;
 
+    //创建打开数据库的方法
     public CityDB(Context context, String path){
         db = context.openOrCreateDatabase(path, Context.MODE_PRIVATE, null);
     }
 
+    //初始化城市信息列表
     public List<City> getAllCity(){
         List<City> list = new ArrayList<>();
         Cursor c = db.rawQuery("SELECT * from "+ CITY_TABLE_NAME,null);

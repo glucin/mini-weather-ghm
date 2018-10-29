@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private ImageView mUpdateBtn;
 
+    //初始化界面的控件
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv, temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
 
@@ -68,6 +69,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mCitySelect = (ImageView) findViewById(R.id.title_city_manger);
         mCitySelect.setOnClickListener(this);
 
+        //调用初始化控件函数
         initView();
     }
 
@@ -115,6 +117,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }).start();
     }
 
+    //单击事件
     public void onClick(View view) {
         if(view.getId() == R.id.title_city_manger){
             Intent i = new Intent(this, SelectCity.class);
@@ -122,6 +125,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             startActivityForResult(i,1);
         }
         if (view.getId() == R.id.title_update_btn) {
+            //通过SharedPreferences读取城市ID
             SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
             String cityCode = sharedPreferences.getString("main_city_code", "101010100");
             Log.d("myWeather", cityCode);
@@ -138,6 +142,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == 1 && resultCode == RESULT_OK){
+            //接收SelectCity发送的消息
             String newCityCode = data.getStringExtra("cityCode");
             Log.d("myWeather","选择的城市代码为"+newCityCode);
 
@@ -153,6 +158,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    //获取并解析网络数据
+    //返回todayWeather类型的数据
     private TodayWeather parseXML(String xmldata) {
         TodayWeather todayWeather = null;
         int fengxiangCount = 0;
@@ -247,6 +254,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return todayWeather;
     }
 
+    //初始化控件内容
     void initView() {
         city_name_Tv = (TextView) findViewById(R.id.title_city_name);
         cityTv = (TextView) findViewById(R.id.city);

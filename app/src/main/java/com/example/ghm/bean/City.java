@@ -1,3 +1,4 @@
+//用来定义City的数据
 package com.example.ghm.bean;
 
 public class City {

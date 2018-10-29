@@ -1,3 +1,4 @@
+//用来实现选择城市的操作
 package com.example.ghm.miniweather;
 
 import android.app.Activity;
@@ -18,9 +19,11 @@ public class SelectCity extends Activity implements View.OnClickListener{
         mBackBtn.setOnClickListener(this);
     }
 
+    //选择城市图标响应
     public void onClick(View v){
         switch (v.getId()){
             case R.id.title_back:
+                //发送数据给MainActivity
                 Intent i = new Intent();
                 i.putExtra("cityCode","101160101");
                 setResult(RESULT_OK, i);

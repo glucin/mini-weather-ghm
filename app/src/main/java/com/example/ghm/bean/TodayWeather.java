@@ -1,5 +1,5 @@
 package com.example.ghm.bean;
-
+//用来定义天气预报中的各种值及其Set和Get函数
 public class TodayWeather {
     private String city;
     private String updatetime;
