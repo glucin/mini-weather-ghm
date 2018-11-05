@@ -1,32 +1,47 @@
 //用来实现选择城市的操作
 package com.example.ghm.miniweather;
 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ghm.app.MyApplication;
 import com.example.ghm.bean.City;
+import com.example.ghm.bean.Pinyin;
+//import com.example.ghm.miniweather.ClearEditText;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SelectCity extends Activity implements View.OnClickListener{
 
     private ImageView mBackBtn;
+//    private SearchView searchView;
+    private ArrayList<String> mSearchResult = new ArrayList<>();
+    private Map<String,String> nameToCode = new HashMap<>();
+    private Map<String,String> nameToPinyin = new HashMap<>();
     //private String[] data = {"apple","banana","orange"};
 
+    //   mClearEditText = (ClearEditText)findViewById(R.id.search_city);
 
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_city);
+
+
 
         List<City> mCityList = MyApplication.getCityList();
         final String[] data = new String[mCityList.size()];
@@ -49,20 +64,61 @@ public class SelectCity extends Activity implements View.OnClickListener{
 
         mBackBtn = (ImageView) findViewById(R.id.title_back);
         mBackBtn.setOnClickListener(this);
+        final ArrayAdapter<String> adapter;
+        for(City city : mCityList){
+            String strCode = city.getNumber();
+            String strName = city.getCity();
+            String strNamePinyin = Pinyin.converterToSpell(strName);
+            nameToCode.put(strName,strCode);
+            nameToPinyin.put(strName,strNamePinyin);
+            mSearchResult.add(strName);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                SelectCity.this, android.R.layout.simple_list_item_1, data);
-        ListView listView = (ListView)findViewById(R.id.list_view);
+        }
+        if(mSearchResult == null) {
+            adapter = new ArrayAdapter<String>(
+                    SelectCity.this, android.R.layout.simple_list_item_1, data);
+
+        }
+        else{
+            adapter = new ArrayAdapter<String>(
+                    SelectCity.this, android.R.layout.simple_list_item_1, mSearchResult);
+        }
+        final SearchView searchView = (SearchView)findViewById(R.id.search_city);
+//        searchView.setIconified(true);
+//        searchView.setQueryHint("搜索城市");
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                if (!TextUtils.isEmpty(newText)) {
+//                    if (mSearchResult != null)
+//                        mSearchResult.clear();
+//                    for (String str : nameToPinyin.keySet()) {
+//                        if (str.contains(newText) || nameToPinyin.get(str).contains(newText)) {
+//                            mSearchResult.add(str);
+//                        }
+//                    }
+//                    adapter.notifyDataSetChanged();
+//                }
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//        });
+        ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent();
-                i.putExtra("cityCode",data_num[position]);
+                i.putExtra("cityCode", data_num[position]);
                 setResult(RESULT_OK, i);
                 finish();
             }
         });
+
     }
 
     //选择城市图标响应
