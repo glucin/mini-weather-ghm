@@ -98,6 +98,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     String responseStr = response.toString();
                     Log.d("myWeather", responseStr);
                     todayWeather = parseXML(responseStr);
+
                     if(todayWeather != null){
                         Log.d("myWeather",todayWeather.toString());
 
@@ -118,6 +119,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     //单击事件
+
+
+
+
     public void onClick(View view) {
         if(view.getId() == R.id.title_city_manger){
             Intent i = new Intent(this, SelectCity.class);

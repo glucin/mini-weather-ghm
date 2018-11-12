@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,7 +41,6 @@ public class SelectCity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_city);
-
 
 
         List<City> mCityList = MyApplication.getCityList();
@@ -83,43 +83,62 @@ public class SelectCity extends Activity implements View.OnClickListener{
             adapter = new ArrayAdapter<String>(
                     SelectCity.this, android.R.layout.simple_list_item_1, mSearchResult);
         }
-        final SearchView searchView = (SearchView)findViewById(R.id.search_city);
-//        searchView.setIconified(true);
-//        searchView.setQueryHint("搜索城市");
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                if (!TextUtils.isEmpty(newText)) {
-//                    if (mSearchResult != null)
-//                        mSearchResult.clear();
-//                    for (String str : nameToPinyin.keySet()) {
-//                        if (str.contains(newText) || nameToPinyin.get(str).contains(newText)) {
-//                            mSearchResult.add(str);
-//                        }
-//                    }
-//                    adapter.notifyDataSetChanged();
-//                }
-//                return true;
-//            }
+        final android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView)findViewById(R.id.search_city);
+        searchView.setIconified(true);
+        searchView.setQueryHint("搜索城市");
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!TextUtils.isEmpty(newText)) {
+                    if (mSearchResult != null)
+                        mSearchResult.clear();
+                    for (String str : nameToPinyin.keySet()) {
+                        if (str.contains(newText) || nameToPinyin.get(str).contains(newText)) {
+                            mSearchResult.add(str);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+        });
+        final ListView listView = (ListView) findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
 //
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                final List<City> listcity = MyApplication.getInstance().getCityList();
+//                String select_cityCode = listcity.get(position).getNumber();
+//                Intent i = new Intent();
+//                i.putExtra("cityCode", select_cityCode);
+////                Intent i = new Intent();
+////
+////                i.putExtra("cityCode", data_num[position]);
+//                setResult(RESULT_OK, i);
+//                finish();
 //            }
 //        });
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+                Toast.makeText(SelectCity.this ,nameToCode.get(mSearchResult.get(position)),Toast.LENGTH_LONG).show();
+                String select_cityCode = nameToCode.get(mSearchResult.get(position));
                 Intent i = new Intent();
-                i.putExtra("cityCode", data_num[position]);
+                i.putExtra("cityCode", select_cityCode);
                 setResult(RESULT_OK, i);
                 finish();
             }
         });
-
-    }
+        }
 
     //选择城市图标响应
     public void onClick(View v){
