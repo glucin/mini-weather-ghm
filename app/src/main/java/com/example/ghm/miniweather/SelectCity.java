@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.ghm.app.MyApplication;
 import com.example.ghm.bean.City;
 import com.example.ghm.bean.Pinyin;
+import com.example.ghm.util.SharedPreferenceUtil;
 //import com.example.ghm.miniweather.ClearEditText;
 
 import java.util.ArrayList;
@@ -33,12 +34,16 @@ public class SelectCity extends Activity implements View.OnClickListener{
     private ArrayList<String> mSearchResult = new ArrayList<>();
     private Map<String,String> nameToCode = new HashMap<>();
     private Map<String,String> nameToPinyin = new HashMap<>();
+    private SharedPreferenceUtil mSpUtil;
+    private MyApplication myApplication;
+    private HashMap<String, City> cityCode_cityHashMap;
     //private String[] data = {"apple","banana","orange"};
 
     //   mClearEditText = (ClearEditText)findViewById(R.id.search_city);
 
 
     protected void onCreate(Bundle savedInstanceState){
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_city);
 
@@ -46,6 +51,13 @@ public class SelectCity extends Activity implements View.OnClickListener{
         List<City> mCityList = MyApplication.getCityList();
         final String[] data = new String[mCityList.size()];
         final String[] data_num = new String[mCityList.size()];
+        myApplication = MyApplication.getInstance();
+        mSpUtil = myApplication.getSharePreferenceUtil();
+        cityCode_cityHashMap = new HashMap<>();
+        for(City city : mCityList){
+            cityCode_cityHashMap.put(city.getNumber(),city);
+        }
+        City curCity = cityCode_cityHashMap.get(mSpUtil.getCurrCityCode());
         int i = 0;
         for(City city : mCityList){
             data[i] = city.getCity();
@@ -146,7 +158,7 @@ public class SelectCity extends Activity implements View.OnClickListener{
             case R.id.title_back:
                 //发送数据给MainActivity
                 Intent i = new Intent();
-                i.putExtra("cityCode","101160101");
+                i.putExtra("cityCode","101010100");
                 setResult(RESULT_OK, i);
                 finish();
                 break;

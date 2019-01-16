@@ -6,14 +6,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ghm.app.MyApplication;
 import com.example.ghm.bean.TodayWeather;
 import com.example.ghm.util.NetUtil;
+import com.example.ghm.util.SharedPreferenceUtil;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -39,11 +43,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private ImageView mCitySelect;
 
+    private ProgressBar mUpdateProgressBar;
+
+    private String mCurCityCode;
+    private SharedPreferenceUtil mSpUtil;
+    private MyApplication myApplication;
+
     private Handler mHandler = new Handler(){
         public void handleMessage(android.os.Message msg){
            switch (msg.what){
                case UPDATE_TODAY_WEATHER:
                    updateTodayWeather((TodayWeather)msg.obj);
+                   mUpdateBtn.setVisibility(View.VISIBLE);
+                   mUpdateProgressBar.setVisibility((View.GONE));
                    break;
                default:
                    break;
@@ -52,6 +64,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     };
 
     protected void onCreate(Bundle savedInstanceState) {
+        myApplication = MyApplication.getInstance();
+        mSpUtil = myApplication.getSharePreferenceUtil();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_info);
 
@@ -69,11 +84,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mCitySelect = (ImageView) findViewById(R.id.title_city_manger);
         mCitySelect.setOnClickListener(this);
 
+        mUpdateProgressBar = (ProgressBar)findViewById(R.id.title_update_progress);
+
         //调用初始化控件函数
         initView();
     }
 
     private void queryWeatherCode(String cityCode) {
+        mUpdateBtn.setVisibility(View.GONE);
+        mUpdateProgressBar.setVisibility(View.VISIBLE);
         final String address = "http://wthrcdn.etouch.cn/WeatherApi?citykey=" + cityCode;
         Log.d("myWeather", address);
         new Thread(new Runnable() {
@@ -131,13 +150,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         if (view.getId() == R.id.title_update_btn) {
             //通过SharedPreferences读取城市ID
-            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
-            String cityCode = sharedPreferences.getString("main_city_code", "101010100");
-            Log.d("myWeather", cityCode);
+           // SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+           // String cityCode = sharedPreferences.getString("main_city_code", "101010100");
+          //  Log.d("myWeather", cityCode);
 
             if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
                 Log.d("myWeather", "网络正常");
-                queryWeatherCode(cityCode);
+                String cityCode;
+                if(TextUtils.isEmpty((mSpUtil.getCurrCityCode()))){
+                    mSpUtil.setCurrCityCode("101010100");
+                    cityCode = mSpUtil.getCurrCityCode();
+
+                }
+                else{
+                    cityCode = mSpUtil.getCurrCityCode();
+                    queryWeatherCode(cityCode);
+
+                }
+
             } else {
                 Log.d("myWeather", "网络异常");
                 Toast.makeText(MainActivity.this, "网络异常", Toast.LENGTH_LONG).show();
@@ -153,6 +183,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             if(NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE){
                 Log.d("myWeather"," 网络正常");
+                mSpUtil.setCurrCityCode(newCityCode);
                 queryWeatherCode((newCityCode));
             }
             else {

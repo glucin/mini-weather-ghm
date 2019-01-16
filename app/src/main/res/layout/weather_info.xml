@@ -3,6 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
+
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="fill_parent"
@@ -35,29 +38,46 @@
             android:textColor="#ffffff"
             android:textSize="22.0sp" />
 
-        <ImageView
-            android:id="@+id/title_update_btn"
-            android:layout_width="45.0dip"
-            android:layout_height="45.0dip"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:src="@drawable/title_update"
-            android:visibility="visible"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true">
+            <ImageView
+                android:id="@+id/title_location"
+                android:layout_width="45.0dip"
+                android:layout_height="45.0dip"
+                android:src="@drawable/base_action_bar_action_city" />
+            <ImageView
+                android:id="@+id/title_share"
+                android:layout_width="45.0dip"
+                android:layout_height="45.0dip"
+                android:src="@drawable/title_share" />
+            <FrameLayout
+                android:id="@+id/title_update"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center">
 
-        <ImageView
-            android:id="@+id/title_share"
-            android:layout_width="45.0dip"
-            android:layout_height="45.0dip"
-            android:layout_toLeftOf="@id/title_update_btn"
-            android:src="@drawable/title_share" />
+                <ImageView
+                    android:id="@+id/title_update_btn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:src="@drawable/title_update"/>
 
-        <ImageView
-            android:id="@+id/title_location"
-            android:layout_width="45.0dip"
-            android:layout_height="45.0dip"
-            android:layout_toLeftOf="@id/title_share"
-            android:src="@drawable/base_action_bar_action_city" />
+                <ProgressBar
+                    android:id="@+id/title_update_progress"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    style="@style/title_update_progressbar_style"
+                    android:visibility="gone"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
     </RelativeLayout>
+
+
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -186,6 +206,7 @@
                     android:layout_width="188dp"
                     android:layout_height="132dp"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:src="@drawable/biz_plugin_weather_qing" />
                 <!-- 今日星期 -->

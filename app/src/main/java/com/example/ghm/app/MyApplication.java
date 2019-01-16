@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.ghm.bean.City;
 import com.example.ghm.db.CityDB;
+import com.example.ghm.util.SharedPreferenceUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,6 +23,8 @@ public class MyApplication extends Application{
 
     private static List<City> mCityList;
 
+    private SharedPreferenceUtil mSpUtil;
+
     public void onCreate(){
         super.onCreate();
         Log.d(TAG, "MyApplication->Oncreate");
@@ -29,6 +32,8 @@ public class MyApplication extends Application{
         myApplication = this;
         myCityDB = openCityDB();
         initCityList();
+        mSpUtil = new SharedPreferenceUtil(this,SharedPreferenceUtil.CITY_SHAREPRE_FILE);
+
     }
     public static MyApplication getInstance(){
         return myApplication;
@@ -97,6 +102,12 @@ public class MyApplication extends Application{
             }
         }
         return new CityDB(this, path);
+    }
+    public synchronized SharedPreferenceUtil getSharePreferenceUtil(){
+        if(mSpUtil == null){
+            mSpUtil = new SharedPreferenceUtil(this, SharedPreferenceUtil.CITY_SHAREPRE_FILE);
+        }
+        return mSpUtil;
     }
 }
 
