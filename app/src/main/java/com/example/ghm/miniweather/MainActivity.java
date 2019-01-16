@@ -5,16 +5,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.LocaleList;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ghm.app.MyApplication;
+import com.example.ghm.bean.City;
 import com.example.ghm.bean.TodayWeather;
 import com.example.ghm.util.NetUtil;
 import com.example.ghm.util.SharedPreferenceUtil;
@@ -30,6 +33,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -48,6 +53,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private String mCurCityCode;
     private SharedPreferenceUtil mSpUtil;
     private MyApplication myApplication;
+
+    private java.util.List<City> mCityList;
+    private String mLocCityCode;
+    private String cityName;
+    private  ImageView mtitleLocation;
+
+
+
+
+
 
     private Handler mHandler = new Handler(){
         public void handleMessage(android.os.Message msg){
