@@ -16,6 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.example.ghm.app.MyApplication;
 import com.example.ghm.bean.City;
 import com.example.ghm.bean.TodayWeather;
@@ -46,7 +48,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv, temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
 
-    private ImageView mCitySelect;
+    private ImageView mCitySelect,mTitleLocation;
 
     private ProgressBar mUpdateProgressBar;
 
@@ -58,6 +60,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private String mLocCityCode;
     private String cityName;
     private  ImageView mtitleLocation;
+
+    public LocationClient mLocationClient = null;
+    private MyLocationListener myLocationListerner = new MyLocationListener();
 
 
 
@@ -100,6 +105,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mCitySelect.setOnClickListener(this);
 
         mUpdateProgressBar = (ProgressBar)findViewById(R.id.title_update_progress);
+
+        mLocationClient = new LocationClient(getApplicationContext());
+        mLocationClient.registerLocationListener(myLocationListerner);
+        initLocation();
 
         //调用初始化控件函数
         initView();
@@ -187,6 +196,50 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Log.d("myWeather", "网络异常");
                 Toast.makeText(MainActivity.this, "网络异常", Toast.LENGTH_LONG).show();
             }
+        }
+        if(view.getId() == R.id.title_location){
+
+
+            if(mLocationClient.isStarted()){
+                mLocationClient.stop();
+            }
+            mLocationClient.start();
+
+            final Handler BDHamdler = new Handler(){
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case  UPDATE_TODAY_WEATHER:
+                            if(msg.obj != null){
+                                if(NetUtil.getNetworkState(MainActivity.this) != NetUtil.NETWORN_NONE){
+                                    queryWeatherCode(myLocationListerner.cityCode);
+                                }
+                                else {
+                                    Toast.makeText(MainActivity.this,"网络异常",Toast.LENGTH_LONG).show();
+                                }
+                            }
+                            myLocationListerner.cityCode = null;
+                            break;
+                            default:
+                                break;
+                    }
+                }
+            };
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        while(myLocationListerner.cityCode == null){
+                            Thread.sleep(2000);
+                        }
+                        Message msg = new Message();
+                        msg.what =  UPDATE_TODAY_WEATHER;
+                        msg.obj = myLocationListerner.cityCode;
+                        BDHamdler.sendMessage(msg);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
@@ -420,6 +473,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         Toast.makeText(MainActivity.this, "更新成功!", Toast.LENGTH_SHORT).show();
     }
+
+    //配置定位的SDK函数
+    private void initLocation(){
+        LocationClientOption option = new LocationClientOption();
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        option.setCoorType("bd09ll");
+        int span = 1000;
+        option.setScanSpan(0);
+
+        option.setIsNeedAddress(true);
+        option.setOpenGps(true);
+        option.setLocationNotify(true);
+        option.setIsNeedLocationPoiList(true);
+        option.setIsNeedLocationDescribe(true);
+        option.SetIgnoreCacheException(false);
+        option.setIgnoreKillProcess(false);
+        option.setEnableSimulateGps(false);
+
+    }
 }
+
 
 
