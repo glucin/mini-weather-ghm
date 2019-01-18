@@ -14,6 +14,11 @@ public class TodayWeather {
     private String low;
     private String type;
 
+    private String week_today,temperatureH,temperatureL,climate,week_today1,temperatureH1,temperatureL1,climate1,wind1,
+    week_today2,temperatureH2,temperatureL2,climate2,wind2;
+    private String  week_today3,temperatureH3,temperatureL3,climate3,week_today4,temperatureH4,temperatureL4,climate4,wind4,
+            week_today5,temperatureH5,temperatureL5,climate5,wind5;
+
     public String getCity(){
         return city;
     }

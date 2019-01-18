@@ -7,8 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.LocaleList;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -35,7 +39,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -63,6 +68,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public LocationClient mLocationClient = null;
     private MyLocationListener myLocationListerner = new MyLocationListener();
+
+    private PagerAdapter vpAdapter;
+    private ViewPager vp;
+    private List<View> views;
+    private int[] ids = {R.id.iv1, R.id.iv2};
+    private TextView week_today,temperature,climate,wind,week_today1,temperature1,climate1,wind1,
+            week_today2,temperature2,climate2,wind2, week_today3,temperature3,climate3,wind3,week_today4,temperature4,climate4,wind4,
+            week_today5,temperature5,climate5,wind5;
 
 
 
@@ -108,10 +121,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(myLocationListerner);
-        initLocation();
+        //initLocation();
 
         //调用初始化控件函数
         initView();
+        //initDots();
+        //initViews();
     }
 
     private void queryWeatherCode(String cityCode) {
@@ -208,7 +223,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             final Handler BDHamdler = new Handler(){
                 public void handleMessage(Message msg){
                     switch (msg.what){
-                        case  UPDATE_TODAY_WEATHER:
+                        case UPDATE_TODAY_WEATHER:
                             if(msg.obj != null){
                                 if(NetUtil.getNetworkState(MainActivity.this) != NetUtil.NETWORN_NONE){
                                     queryWeatherCode(myLocationListerner.cityCode);
@@ -232,14 +247,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             Thread.sleep(2000);
                         }
                         Message msg = new Message();
-                        msg.what =  UPDATE_TODAY_WEATHER;
+                        msg.what = UPDATE_TODAY_WEATHER;
                         msg.obj = myLocationListerner.cityCode;
                         BDHamdler.sendMessage(msg);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }
-            });
+            }).start();
         }
     }
 
@@ -382,6 +397,69 @@ public class MainActivity extends Activity implements View.OnClickListener {
         temperatureTv.setText("N/A");
         climateTv.setText("N/A");
         windTv.setText("N/A");
+//
+//        week_today = views.get(0).findViewById(R.id.week_today);
+//        temperature = views.get(0).findViewById(R.id.temperature);
+//        climate = views.get(0).findViewById(R.id.climate);
+//        wind = views.get(0).findViewById(R.id.wind);
+//
+//        week_today1 = views.get(0).findViewById(R.id.week_today1);
+//        temperature1 = views.get(0).findViewById(R.id.temperature1);
+//        climate1 = views.get(0).findViewById(R.id.climate1);
+//        wind1 = views.get(0).findViewById(R.id.wind1);
+//
+//        week_today2 = views.get(0).findViewById(R.id.week_today2);
+//        temperature2 = views.get(0).findViewById(R.id.temperature2);
+//        climate2 = views.get(0).findViewById(R.id.climate2);
+//        wind2 = views.get(0).findViewById(R.id.wind2);
+//
+//        week_today3 = views.get(0).findViewById(R.id.week_today3);
+//        temperature3 = views.get(0).findViewById(R.id.temperature3);
+//        climate1 = views.get(0).findViewById(R.id.climate3);
+//        wind1 = views.get(0).findViewById(R.id.wind3);
+//
+//        week_today4 = views.get(0).findViewById(R.id.week_today4);
+//        temperature4 = views.get(0).findViewById(R.id.temperature4);
+//        climate4 = views.get(0).findViewById(R.id.climate4);
+//        wind4 = views.get(0).findViewById(R.id.wind4);
+//
+//        week_today5 = views.get(0).findViewById(R.id.week_today5);
+//        temperature5 = views.get(0).findViewById(R.id.temperature5);
+//        climate5 = views.get(0).findViewById(R.id.climate5);
+//        wind5 = views.get(0).findViewById(R.id.wind5);
+
+
+
+//        week_today.setText("N/A");
+//        temperature.setText("N/A");
+//        climate.setText("N/A");
+//        wind.setText("N/A");
+//
+//        week_today1.setText("N/A");
+//        temperature1.setText("N/A");
+//        climate1.setText("N/A");
+//        wind1.setText("N/A");
+//
+//        week_today2.setText("N/A");
+//        temperature2.setText("N/A");
+//        climate2.setText("N/A");
+//        wind2.setText("N/A");
+//
+//        week_today3.setText("N/A");
+//        temperature3.setText("N/A");
+//        climate1.setText("N/A");
+//        wind1.setText("N/A");
+//
+//        week_today4.setText("N/A");
+//        temperature4.setText("N/A");
+//        climate4.setText("N/A");
+//        wind4.setText("N/A");
+//
+//        week_today5.setText("N/A");
+//        temperature5.setText("N/A");
+//        climate5.setText("N/A");
+//        wind5.setText("N/A");
+
     }
     void updateTodayWeather(TodayWeather todayWeather) {
         city_name_Tv.setText(todayWeather.getCity() + "天气");
@@ -492,6 +570,50 @@ public class MainActivity extends Activity implements View.OnClickListener {
         option.setEnableSimulateGps(false);
 
     }
+
+    void  initDots(){
+        ImageView[] dots = new ImageView[views.size()];
+        for (int i = 0; i<views.size();i++){
+            dots[i] = (ImageView)findViewById(ids[i]);
+        }
+    }
+
+    private void initViews() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        views = new ArrayList<View>();
+        views.add(inflater.inflate(R.layout.sixday1, null));
+        views.add(inflater.inflate(R.layout.sixday2, null));
+        vpAdapter = new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return 0;
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
+                return false;
+            }
+        };
+        vp = (ViewPager) findViewById(R.id.viewpager);
+        vp.setAdapter(vpAdapter);
+        //vp.setOnPageChangeListener();
+    }
+
+        public void onPageScrolled(int position, float positionOffset,int positionOffsetPixels){
+
+        }
+
+        public void onPageSelected(int position) {
+            ImageView[] dots = new ImageView[views.size()];
+            for (int a = 0; a < ids.length; a++) {
+
+
+            }
+        }
+        public void onPageScrollStateChanged(int state){
+
+        }
+
 }
 
 
