@@ -121,12 +121,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(myLocationListerner);
-        //initLocation();
+        initLocation();
 
         //调用初始化控件函数
         initView();
-        //initDots();
-        //initViews();
+//        initDots();
+//        initViews();
     }
 
     private void queryWeatherCode(String cityCode) {
@@ -182,6 +182,53 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
     public void onClick(View view) {
+        if(view.getId() == R.id.title_location){
+
+            Toast.makeText(MainActivity.this, "aaa", Toast.LENGTH_LONG).show();
+
+
+            if(mLocationClient.isStarted()){
+                mLocationClient.stop();
+            }
+            mLocationClient.start();
+            final int DB = 1000;
+
+            final Handler BDHamdler = new Handler(){
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case DB:
+                            if(msg.obj != null){
+                                if(NetUtil.getNetworkState(MainActivity.this) != NetUtil.NETWORN_NONE){
+                                    queryWeatherCode(myLocationListerner.cityCode);
+                                }
+                                else {
+                                    Toast.makeText(MainActivity.this,"网络异常",Toast.LENGTH_LONG).show();
+                                }
+                            }
+                            myLocationListerner.cityCode = null;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            };
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        while(myLocationListerner.cityCode == null){
+                            Thread.sleep(2000);
+                        }
+                        Message msg = new Message();
+                        msg.what = DB;
+                        msg.obj = myLocationListerner.cityCode;
+                        BDHamdler.sendMessage(msg);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
         if(view.getId() == R.id.title_city_manger){
             Intent i = new Intent(this, SelectCity.class);
             //startActivity(i);
@@ -192,6 +239,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
            // SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
            // String cityCode = sharedPreferences.getString("main_city_code", "101010100");
           //  Log.d("myWeather", cityCode);
+
 
             if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
                 Log.d("myWeather", "网络正常");
@@ -212,50 +260,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Toast.makeText(MainActivity.this, "网络异常", Toast.LENGTH_LONG).show();
             }
         }
-        if(view.getId() == R.id.title_location){
 
-
-            if(mLocationClient.isStarted()){
-                mLocationClient.stop();
-            }
-            mLocationClient.start();
-
-            final Handler BDHamdler = new Handler(){
-                public void handleMessage(Message msg){
-                    switch (msg.what){
-                        case UPDATE_TODAY_WEATHER:
-                            if(msg.obj != null){
-                                if(NetUtil.getNetworkState(MainActivity.this) != NetUtil.NETWORN_NONE){
-                                    queryWeatherCode(myLocationListerner.cityCode);
-                                }
-                                else {
-                                    Toast.makeText(MainActivity.this,"网络异常",Toast.LENGTH_LONG).show();
-                                }
-                            }
-                            myLocationListerner.cityCode = null;
-                            break;
-                            default:
-                                break;
-                    }
-                }
-            };
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        while(myLocationListerner.cityCode == null){
-                            Thread.sleep(2000);
-                        }
-                        Message msg = new Message();
-                        msg.what = UPDATE_TODAY_WEATHER;
-                        msg.obj = myLocationListerner.cityCode;
-                        BDHamdler.sendMessage(msg);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
